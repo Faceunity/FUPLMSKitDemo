@@ -1,0 +1,44 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "D7D27E06BF9F2A5B59D680347B44CD51878725C5",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "3F95D69651F508B7F885DFB7E50A422D1CD69A18" : 0,
+    "9BB0AC19F4A9012B99456EF77F97B614809FE4C0" : 0,
+    "E95434706541E4F53523D4F8C1057CE8237AC944" : 0,
+    "D7D27E06BF9F2A5B59D680347B44CD51878725C5" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "30193B9E-0860-4E7F-9C7D-AAA0CCA21B68",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "3F95D69651F508B7F885DFB7E50A422D1CD69A18" : "pili-rtc-streaming-ios-kit\/PLRTCStreamingKit\/Submodule\/pili-streaming-kit\/PLStreamingKit\/Submodule\/pili-camera-sdk\/",
+    "9BB0AC19F4A9012B99456EF77F97B614809FE4C0" : "pili-rtc-streaming-ios-kit\/PLRTCStreamingKit\/Submodule\/pili-streaming-kit\/",
+    "E95434706541E4F53523D4F8C1057CE8237AC944" : "pili-rtc-streaming-ios-kit\/PLRTCStreamingKit\/Submodule\/pili-streaming-kit\/PLStreamingKit\/Submodule\/pili-camera-sdk\/deps\/pili-librtmp\/",
+    "D7D27E06BF9F2A5B59D680347B44CD51878725C5" : "pili-rtc-streaming-ios-kit\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "PLRTCStreamingKitDemo",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "PLRTCStreamingKitDemo\/PLRTCStreamingKitDemo.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:qbox\/pili-camera-sdk.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "3F95D69651F508B7F885DFB7E50A422D1CD69A18"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:qbox\/pili-streaming-kit.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9BB0AC19F4A9012B99456EF77F97B614809FE4C0"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:lawder\/pili-rtc-streaming-ios-kit.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D7D27E06BF9F2A5B59D680347B44CD51878725C5"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:pili-engineering\/pili-librtmp.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E95434706541E4F53523D4F8C1057CE8237AC944"
+    }
+  ]
+}

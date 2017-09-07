@@ -1,0 +1,36 @@
+{
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "9BB0AC19F4A9012B99456EF77F97B614809FE4C0" : 0,
+    "3F95D69651F508B7F885DFB7E50A422D1CD69A18" : 0,
+    "E95434706541E4F53523D4F8C1057CE8237AC944" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "6B0B641F-804B-4604-A4C9-8EFF6F12452E",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "9BB0AC19F4A9012B99456EF77F97B614809FE4C0" : "pili-connection-streaming-ios-kit\/PLConnectionStreamingKit\/Submodule\/pili-streaming-kit\/",
+    "3F95D69651F508B7F885DFB7E50A422D1CD69A18" : "pili-connection-streaming-ios-kit\/PLConnectionStreamingKit\/Submodule\/pili-streaming-kit\/PLStreamingKit\/Submodule\/pili-camera-sdk\/",
+    "E95434706541E4F53523D4F8C1057CE8237AC944" : "pili-connection-streaming-ios-kit\/PLConnectionStreamingKit\/Submodule\/pili-streaming-kit\/PLStreamingKit\/Submodule\/pili-camera-sdk\/deps\/pili-librtmp\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "PLConnectionStreamingKitDemo",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "PLConnectionStreamingKitDemo\/PLConnectionStreamingKitDemo.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:qbox\/pili-camera-sdk.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "3F95D69651F508B7F885DFB7E50A422D1CD69A18"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:qbox\/pili-streaming-kit.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9BB0AC19F4A9012B99456EF77F97B614809FE4C0"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:pili-engineering\/pili-librtmp.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E95434706541E4F53523D4F8C1057CE8237AC944"
+    }
+  ]
+}
