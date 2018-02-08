@@ -1,1 +1,0 @@
-详细开发文档请访问：https://developer.qiniu.io/pili/sdk/1639/PLMediaStreamingKit-RTC
