@@ -9,14 +9,13 @@
 #import "FUManager.h"
 #import "FURenderer.h"
 #import "authpack.h"
+#import <sys/utsname.h>
 
 @interface FUManager ()
 {
     //MARK: Faceunity
     int items[3];
     int frameID;
-    
-    NSDictionary *hintDic;
 }
 @end
 
@@ -46,21 +45,19 @@ static FUManager *shareManager = NULL;
         
         // 开启表情跟踪优化功能
         NSData *animModelData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"anim_model.bundle" ofType:nil]];
-        int res = fuLoadAnimModel((void *)animModelData.bytes, (int)animModelData.length);
-        NSLog(@"fuLoadAnimModel %@",res == 0 ? @"failure":@"success" );
+        int res0 = fuLoadAnimModel((void *)animModelData.bytes, (int)animModelData.length);
+        NSLog(@"fuLoadAnimModel %@",res0 == 0 ? @"failure":@"success" );
 
-        /*设置默认参数*/
-        self.itemsDataSource = @[@"noitem", @"EatRabbi", @"bg_seg", @"yazui", @"mask_matianyu", @"houzi", @"Mood", @"gradient", @"yuguan"];
+        NSData *arModelData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ardata_ex.bundle" ofType:nil]];
         
-        self.filtersDataSource = @[@"origin", @"delta", @"electric", @"slowlived", @"tokyo", @"warm"];
-    
-        self.beautyFiltersDataSource = @[@"ziran", @"danya", @"fennen", @"qingxin", @"hongrun"];
-        self.filtersCHName = @{@"ziran":@"自然", @"danya":@"淡雅", @"fennen":@"粉嫩", @"qingxin":@"清新", @"hongrun":@"红润"};
-        [self setDefaultParameters];
+        
+        int res1 = fuLoadExtendedARData((void *)arModelData.bytes, (int)arModelData.length);
+        
+        NSLog(@"fuLoadAnimModel %@",res1 == 0 ? @"failure":@"success" );
+        
+       [self setDefaultParameters];
         
         NSLog(@"faceunitySDK version:%@",[FURenderer getVersion]);
-        
-        hintDic = @{@"fu_zh_duzui":@"做嘟嘴动作",@"Mood":@"嘴角向上或嘴角向下"};
     }
     
     return self;
@@ -69,25 +66,36 @@ static FUManager *shareManager = NULL;
 /*设置默认参数*/
 - (void)setDefaultParameters {
     
-    self.selectedItem = self.itemsDataSource[1]; //贴纸道具
+    self.itemsDataSource = @[ @"noitem", @"fengya_ztt_fu", @"hudie_lm_fu", @"juanhuzi_lm_fu", @"mask_hat", @"touhua_ztt_fu", @"yazui", @"yuguan"];
+    self.selectedItem = @"fengya_ztt_fu" ;
     
-    self.selectedFilter = self.beautyFiltersDataSource[0]; //美颜滤镜效果
+    self.filtersDataSource = @[@"origin", @"delta", @"electric", @"slowlived", @"tokyo", @"warm"];
+    self.selectedFilter         = self.filtersDataSource[0] ;
     
-    self.selectedBlur = 6; //磨皮程度
+    self.beautyFiltersDataSource = @[@"ziran", @"danya", @"fennen", @"qingxin", @"hongrun"];
+    self.filtersCHName = @{@"ziran":@"自然", @"danya":@"淡雅", @"fennen":@"粉嫩", @"qingxin":@"清新", @"hongrun":@"红润"};
     
-    self.skinDetectEnable = YES; //是否开启皮肤检测
+    self.selectedFilterLevel    = 0.5 ;
     
-    self.beautyLevel = 0.2; //美白程度
+    self.skinDetectEnable       = YES ;
+    self.blurShape              = 0 ;
+    self.blurLevel              = 0.7 ;
+    self.whiteLevel             = 0.5 ;
+    self.redLevel               = 0.5 ;
     
-    self.redLevel = 0.5; //红润程度
+    self.eyelightingLevel       = 0.7 ;
+    self.beautyToothLevel       = 0.7 ;
     
-    self.thinningLevel = 0.7; //瘦脸程度
+    self.faceShape              = 4 ;
+    self.enlargingLevel         = 0.4 ;
+    self.thinningLevel          = 0.4 ;
+    self.enlargingLevel_new         = 0.4 ;
+    self.thinningLevel_new          = 0.4 ;
     
-    self.enlargingLevel = 0.3; //大眼程度
-    
-    self.faceShapeLevel = 0.3; //美型程度
-    
-    self.faceShape = 3; //美型类型
+    self.jewLevel               = 0.3 ;
+    self.foreheadLevel          = 0.3 ;
+    self.noseLevel              = 0.5 ;
+    self.mouthLevel             = 0.4 ;
     
     self.enableGesture = NO;
     self.enableMaxFaces = NO;
@@ -105,27 +113,23 @@ static FUManager *shareManager = NULL;
 - (void)setEnableGesture:(BOOL)enableGesture
 {
     _enableGesture = enableGesture;
-    /**开启手势识别*/
-    if (_enableGesture) {
-        [self loadGesture];
-    }else{
-        if (items[2] != 0) {
-            
-            NSLog(@"faceunity: destroy gesture");
-            
-            [FURenderer destroyItem:items[2]];
-            
-            items[2] = 0;
-        }
-    }
 }
 
 /**开启多脸识别（最高可设为8，不过考虑到性能问题建议设为4以内*/
 - (void)setEnableMaxFaces:(BOOL)enableMaxFaces
 {
-    if (self.enableMaxFaces) {
-        [FURenderer setMaxFaces:4];
+    if (_enableMaxFaces == enableMaxFaces) {
+        return;
     }
+    
+    _enableMaxFaces = enableMaxFaces;
+    
+    if (_enableMaxFaces) {
+        [FURenderer setMaxFaces:4];
+    }else{
+        [FURenderer setMaxFaces:1];
+    }
+    
 }
 
 /**销毁全部道具*/
@@ -148,17 +152,6 @@ static FUManager *shareManager = NULL;
     [self setDefaultParameters];
 }
 
-/**
- 获取item的提示语
-
- @param item 道具名
- @return 提示语
- */
-- (NSString *)hintForItem:(NSString *)item
-{
-    return hintDic[item];
-}
-
 #pragma -Faceunity Load Data
 /**
  加载普通道具
@@ -166,20 +159,16 @@ static FUManager *shareManager = NULL;
  */
 - (void)loadItem:(NSString *)itemName
 {
-    BOOL isAnimoji = [itemName isEqualToString:@"houzi"];
-    // 开启优化表情校准功能
-    fuSetExpressionCalibration(isAnimoji ? 1:0);
-    
     /**如果取消了道具的选择，直接销毁道具*/
     if ([itemName isEqual: @"noitem"] || itemName == nil)
     {
-        if (items[0] != 0) {
+        if (items[1] != 0) {
             
             NSLog(@"faceunity: destroy item");
-            [FURenderer destroyItem:items[0]];
+            [FURenderer destroyItem:items[1]];
             
-            /**为避免道具句柄被销毁会后仍被使用导致程序出错，这里需要将存放道具句柄的items[0]设为0*/
-            items[0] = 0;
+            /**为避免道具句柄被销毁会后仍被使用导致程序出错，这里需要将存放道具句柄的items[1]设为0*/
+            items[1] = 0;
         }
         
         return;
@@ -190,13 +179,13 @@ static FUManager *shareManager = NULL;
     int itemHandle = [FURenderer itemWithContentsOfFile:path];
     
     /**销毁老的道具句柄*/
-    if (items[0] != 0) {
+    if (items[1] != 0) {
         NSLog(@"faceunity: destroy item");
-        [FURenderer destroyItem:items[0]];
+        [FURenderer destroyItem:items[1]];
     }
     
-    /**将刚刚创建的句柄存放在items[0]中*/
-    items[0] = itemHandle;
+    /**将刚刚创建的句柄存放在items[1]中*/
+    items[1] = itemHandle;
     
     NSLog(@"faceunity: load item");
 }
@@ -205,42 +194,48 @@ static FUManager *shareManager = NULL;
 - (void)loadFilter
 {
     NSString *path = [[NSBundle mainBundle] pathForResource:@"face_beautification.bundle" ofType:nil];
-    
-    items[1] = [FURenderer itemWithContentsOfFile:path];
-}
 
-/**加载手势识别道具，默认未不加载*/
-- (void)loadGesture
-{
-    if (items[2] != 0) {
-        
-        NSLog(@"faceunity: destroy gesture");
-        
-        [FURenderer destroyItem:items[2]];
-        
-        items[2] = 0;
-    }
-    
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"heart_v2.bundle" ofType:nil];
-    
-    items[2] = [FURenderer itemWithContentsOfFile:path];
+    items[0] = [FURenderer itemWithContentsOfFile:path];
 }
 
 /**设置美颜参数*/
-- (void)setBeautyParams
-{
-    /*设置美颜效果（滤镜、磨皮、美白、红润、瘦脸、大眼....）*/
-    [FURenderer itemSetParam:items[1] withName:@"filter_name" value:self.selectedFilter]; //滤镜名称
-    [FURenderer itemSetParam:items[1] withName:@"filter_level" value:@(self.selectedFilterLevel)]; //滤镜程度
-    [FURenderer itemSetParam:items[1] withName:@"blur_level" value:@(self.selectedBlur)]; //磨皮 (0、1、2、3、4、5、6)
-    [FURenderer itemSetParam:items[1] withName:@"skin_detect" value:@(self.skinDetectEnable)]; //是否开启皮肤检测
-    [FURenderer itemSetParam:items[1] withName:@"color_level" value:@(self.beautyLevel)]; //美白 (0~1)
-    [FURenderer itemSetParam:items[1] withName:@"red_level" value:@(self.redLevel)]; //红润 (0~1)
-    [FURenderer itemSetParam:items[1] withName:@"face_shape" value:@(self.faceShape)]; //美型类型 (0、1、2、3) 默认：3，女神：0，网红：1，自然：2
-    [FURenderer itemSetParam:items[1] withName:@"face_shape_level" value:@(self.faceShapeLevel)]; //美型等级 (0~1)
-    [FURenderer itemSetParam:items[1] withName:@"eye_enlarging" value:@(self.enlargingLevel)]; //大眼 (0~1)
-    [FURenderer itemSetParam:items[1] withName:@"cheek_thinning" value:@(self.thinningLevel)]; //瘦脸 (0~1)
+- (void)setBeautyParams {
     
+    if (self.faceShape == 4) {
+        [FURenderer itemSetParam:items[0] withName:@"facewarp_version" value:@(1)]; //新版美颜
+        
+        [FURenderer itemSetParam:items[0] withName:@"face_shape" value:@(3)]; //美型类型 (0、1、2、3) 默认：3，女神：0，网红：1，自然：2
+        [FURenderer itemSetParam:items[0] withName:@"eye_enlarging" value:@(self.enlargingLevel_new)]; //大眼 (0~1)
+        [FURenderer itemSetParam:items[0] withName:@"cheek_thinning" value:@(self.thinningLevel_new)]; //瘦脸 (0~1)
+        
+        [FURenderer itemSetParam:items[0] withName:@"intensity_chin" value:@(self.jewLevel)]; /**下巴 (0~1)*/
+        [FURenderer itemSetParam:items[0] withName:@"intensity_nose" value:@(self.noseLevel)];/**鼻子 (0~1)*/
+        [FURenderer itemSetParam:items[0] withName:@"intensity_forehead" value:@(self.foreheadLevel)];/**额头 (0~1)*/
+        [FURenderer itemSetParam:items[0] withName:@"intensity_mouth" value:@(self.mouthLevel)];/**嘴型 (0~1)*/
+    }else {
+        
+        [FURenderer itemSetParam:items[0] withName:@"facewarp_version" value:@(0)]; //老版美颜
+        
+        [FURenderer itemSetParam:items[0] withName:@"face_shape" value:@(self.faceShape)]; //美型类型 (0、1、2、3) 默认：3，女神：0，网红：1，自然：2
+        [FURenderer itemSetParam:items[0] withName:@"eye_enlarging" value:@(self.enlargingLevel)]; //大眼 (0~1)
+        [FURenderer itemSetParam:items[0] withName:@"cheek_thinning" value:@(self.thinningLevel)]; //瘦脸 (0~1)
+        
+        [FURenderer itemSetParam:items[0] withName:@"intensity_chin" value:@(0)]; /**下巴 (0~1)*/
+        [FURenderer itemSetParam:items[0] withName:@"intensity_nose" value:@(0)];/**鼻子 (0~1)*/
+        [FURenderer itemSetParam:items[0] withName:@"intensity_forehead" value:@(0)];/**额头 (0~1)*/
+        [FURenderer itemSetParam:items[0] withName:@"intensity_mouth" value:@(0)];/**嘴型 (0~1)*/
+    }
+    
+    [FURenderer itemSetParam:items[0] withName:@"skin_detect" value:@(self.skinDetectEnable)]; //是否开启皮肤检测
+    [FURenderer itemSetParam:items[0] withName:@"heavy_blur" value:@(self.blurShape)]; // 美肤类型 (0、1、) 清晰：0，朦胧：1
+    [FURenderer itemSetParam:items[0] withName:@"blur_level" value:@(self.blurLevel * 6.0 )]; //磨皮 (0.0 - 6.0)
+    [FURenderer itemSetParam:items[0] withName:@"color_level" value:@(self.whiteLevel)]; //美白 (0~1)
+    [FURenderer itemSetParam:items[0] withName:@"red_level" value:@(self.redLevel)]; //红润 (0~1)
+    [FURenderer itemSetParam:items[0] withName:@"eye_bright" value:@(self.eyelightingLevel)]; // 亮眼
+    [FURenderer itemSetParam:items[0] withName:@"tooth_whiten" value:@(self.beautyToothLevel)];// 美牙
+    
+    [FURenderer itemSetParam:items[0] withName:@"filter_name" value:self.selectedFilter]; //滤镜名称
+    [FURenderer itemSetParam:items[0] withName:@"filter_level" value:@(self.selectedFilterLevel)]; //滤镜程度
 }
 
 /**将道具绘制到pixelBuffer*/
@@ -250,7 +245,7 @@ static FUManager *shareManager = NULL;
     [self setBeautyParams];
     
     /*Faceunity核心接口，将道具及美颜效果绘制到pixelBuffer中，执行完此函数后pixelBuffer即包含美颜及贴纸效果*/
-    CVPixelBufferRef buffer = [[FURenderer shareRenderer] renderPixelBuffer:pixelBuffer withFrameId:frameID items:items itemCount:3 flipx:YES];//flipx 参数设为YES可以使道具做水平方向的镜像翻转
+    CVPixelBufferRef buffer = [[FURenderer shareRenderer] renderPixelBuffer:pixelBuffer withFrameId:frameID items:items itemCount:sizeof(items)/sizeof(int) flipx:YES];//flipx 参数设为YES可以使道具做水平方向的镜像翻转
     frameID += 1;
     
     return buffer;
@@ -329,13 +324,4 @@ static FUManager *shareManager = NULL;
     
     return nil;
 }
-    
-- (BOOL)isCalibrating{
-    float is_calibrating[1] = {0.0};
-    
-    fuGetFaceInfo(0, "is_calibrating", is_calibrating, 1);
-    
-    return is_calibrating[0] == 1.0;
-}
-
 @end

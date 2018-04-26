@@ -7,7 +7,7 @@
 //
 
 #import "PLRTCStreamingChiefViewController.h"
-#import "PLMediaStreamingKit.h"
+#import <PLRTCStreamingKit/PLRTCStreamingKit.h>
 #import <PLPlayerKit/PLPlayerKit.h>
 #import "PLRTCStreamingSettingManager.h"
 #import "PLRTCStreamingSettingView.h"
@@ -45,9 +45,7 @@ static const CGSize videoSizeMap[] = {
     {720, 1280}
 };
 
-@interface PLRTCStreamingChiefViewController ()<PLMediaStreamingSessionDelegate, PLPlayerDelegate, AVCaptureVideoDataOutputSampleBufferDelegate, PLRTCStreamingSettingViewDelegate,
-FUAPIDemoBarDelegate
->
+@interface PLRTCStreamingChiefViewController ()<PLMediaStreamingSessionDelegate, PLPlayerDelegate, AVCaptureVideoDataOutputSampleBufferDelegate, PLRTCStreamingSettingViewDelegate, FUAPIDemoBarDelegate>
 
 @property (nonatomic, strong) UIButton *actionButton;
 @property (nonatomic, strong) UIButton *backButton;
@@ -79,8 +77,9 @@ FUAPIDemoBarDelegate
 @property (nonatomic, strong) NSURL *pushURL;
 @property (nonatomic, strong) NSDate *startConferenceTime;
 
-
+/****       FaceUnity       ****/
 @property (nonatomic, strong) FUAPIDemoBar *demoBar ;
+/****       FaceUnity       ****/
 @end
 
 @implementation PLRTCStreamingChiefViewController
@@ -100,8 +99,8 @@ FUAPIDemoBarDelegate
     
     [self setupUI];
     
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    self.roomName = [userDefaults objectForKey:@"PLRTCStreamingRoomName"];
+    self.roomName = @"FaceUnity";
+    
     if (!self.roomName) {
         [self showAlertWithMessage:@"请先在设置界面设置您的房间名" completion:nil];
         return;
@@ -109,80 +108,107 @@ FUAPIDemoBarDelegate
     
     [self initStreamingSession];
     
-    /**----------------   FaceUnity   ----------------**/
+    /****       FaceUnity       ****/
     
     [[FUManager shareManager] loadItems];
     [self.view addSubview:self.demoBar];
-    
-    /**----------------   FaceUnity   ----------------**/
+    /****       FaceUnity       ****/
 }
 
-/**----------------   FaceUnity   ----------------**/
+
+/****       FaceUnity       ****/
+
+
+-(FUAPIDemoBar *)demoBar {
+    if (!_demoBar) {
+        
+        _demoBar = [[FUAPIDemoBar alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 164 - 66, self.view.frame.size.width, 164)];
+        
+        _demoBar.itemsDataSource = [FUManager shareManager].itemsDataSource;
+        _demoBar.selectedItem = [FUManager shareManager].selectedItem ;
+        
+        _demoBar.filtersDataSource = [FUManager shareManager].filtersDataSource ;
+        _demoBar.beautyFiltersDataSource = [FUManager shareManager].beautyFiltersDataSource ;
+        _demoBar.filtersCHName = [FUManager shareManager].filtersCHName ;
+        _demoBar.selectedFilter = [FUManager shareManager].selectedFilter ;
+        [_demoBar setFilterLevel:[FUManager shareManager].selectedFilterLevel forFilter:[FUManager shareManager].selectedFilter] ;
+        
+        _demoBar.skinDetectEnable = [FUManager shareManager].skinDetectEnable;
+        _demoBar.blurShape = [FUManager shareManager].blurShape ;
+        _demoBar.blurLevel = [FUManager shareManager].blurLevel ;
+        _demoBar.whiteLevel = [FUManager shareManager].whiteLevel ;
+        _demoBar.redLevel = [FUManager shareManager].redLevel;
+        _demoBar.eyelightingLevel = [FUManager shareManager].eyelightingLevel ;
+        _demoBar.beautyToothLevel = [FUManager shareManager].beautyToothLevel ;
+        _demoBar.faceShape = [FUManager shareManager].faceShape ;
+        
+        _demoBar.enlargingLevel = [FUManager shareManager].enlargingLevel ;
+        _demoBar.thinningLevel = [FUManager shareManager].thinningLevel ;
+        _demoBar.enlargingLevel_new = [FUManager shareManager].enlargingLevel_new ;
+        _demoBar.thinningLevel_new = [FUManager shareManager].thinningLevel_new ;
+        _demoBar.jewLevel = [FUManager shareManager].jewLevel ;
+        _demoBar.foreheadLevel = [FUManager shareManager].foreheadLevel ;
+        _demoBar.noseLevel = [FUManager shareManager].noseLevel ;
+        _demoBar.mouthLevel = [FUManager shareManager].mouthLevel ;
+        
+        _demoBar.delegate = self;
+    }
+    return _demoBar ;
+}
+
+/**      FUAPIDemoBarDelegate       **/
+
+- (void)demoBarDidSelectedItem:(NSString *)itemName {
+    
+    [[FUManager shareManager] loadItem:itemName];
+}
+
+- (void)demoBarBeautyParamChanged {
+    
+    [FUManager shareManager].skinDetectEnable = _demoBar.skinDetectEnable;
+    [FUManager shareManager].blurShape = _demoBar.blurShape;
+    [FUManager shareManager].blurLevel = _demoBar.blurLevel ;
+    [FUManager shareManager].whiteLevel = _demoBar.whiteLevel;
+    [FUManager shareManager].redLevel = _demoBar.redLevel;
+    [FUManager shareManager].eyelightingLevel = _demoBar.eyelightingLevel;
+    [FUManager shareManager].beautyToothLevel = _demoBar.beautyToothLevel;
+    [FUManager shareManager].faceShape = _demoBar.faceShape;
+    [FUManager shareManager].enlargingLevel = _demoBar.enlargingLevel;
+    [FUManager shareManager].thinningLevel = _demoBar.thinningLevel;
+    [FUManager shareManager].enlargingLevel_new = _demoBar.enlargingLevel_new;
+    [FUManager shareManager].thinningLevel_new = _demoBar.thinningLevel_new;
+    [FUManager shareManager].jewLevel = _demoBar.jewLevel;
+    [FUManager shareManager].foreheadLevel = _demoBar.foreheadLevel;
+    [FUManager shareManager].noseLevel = _demoBar.noseLevel;
+    [FUManager shareManager].mouthLevel = _demoBar.mouthLevel;
+    
+    [FUManager shareManager].selectedFilter = _demoBar.selectedFilter ;
+    [FUManager shareManager].selectedFilterLevel = _demoBar.selectedFilterLevel;
+}
+
+-(void)dealloc {
+    
+    NSLog(@"PLRTCStreamingChiefViewController dealloc");
+    /**     -----  FaceUnity  ----     **/
+    [[FUManager shareManager] destoryItems];
+    /**     -----  FaceUnity  ----     **/
+}
+
 
 #pragma mark - 视频数据回调
 
 /// @abstract 获取到摄像头原数据时的回调, 便于开发者做滤镜等处理，需要注意的是这个回调在 camera 数据的输出线程，请不要做过于耗时的操作，否则可能会导致推流帧率下降
 - (CVPixelBufferRef)mediaStreamingSession:(PLMediaStreamingSession *)session cameraSourceDidGetPixelBuffer:(CVPixelBufferRef)pixelBuffer {
     
-    //此处可以做美颜等处理
-    
     [[FUManager shareManager] renderItemsToPixelBuffer:pixelBuffer];
     
     return pixelBuffer;
 }
 
--(FUAPIDemoBar *)demoBar {
-    if (!_demoBar) {
-        _demoBar = [[FUAPIDemoBar alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 215, self.view.frame.size.width, 215)];
-        _demoBar.itemsDataSource =  [FUManager shareManager].itemsDataSource;
-        _demoBar.filtersDataSource = [FUManager shareManager].filtersDataSource;
-        _demoBar.filtersCHName = [FUManager shareManager].filtersCHName;
-        _demoBar.beautyFiltersDataSource = [FUManager shareManager].beautyFiltersDataSource;
-        
-        _demoBar.selectedItem = [FUManager shareManager].selectedItem;      /**选中的道具名称*/
-        _demoBar.selectedFilter = [FUManager shareManager].selectedFilter;  /**选中的滤镜名称*/
-        _demoBar.whiteLevel = [FUManager shareManager].beautyLevel;        /**美白 (0~1)*/
-        _demoBar.redLevel = [FUManager shareManager].redLevel;              /**红润 (0~1)*/
-        _demoBar.selectedBlur = [FUManager shareManager].selectedBlur;      /**磨皮(0、1、2、3、4、5、6)*/
-        _demoBar.skinDetectEnable = [FUManager shareManager].skinDetectEnable;/**是否开启皮肤检测(YES/NO)*/
-        _demoBar.faceShape = [FUManager shareManager].faceShape;            /**美型类型 (0、1、2、3) 默认：3，女神：0，网红：1，自然：2*/
-        _demoBar.faceShapeLevel = [FUManager shareManager].faceShapeLevel;  /**美型等级 (0~1)*/
-        _demoBar.enlargingLevel = [FUManager shareManager].enlargingLevel;  /**大眼 (0~1)*/
-        _demoBar.thinningLevel = [FUManager shareManager].thinningLevel;    /**瘦脸 (0~1)*/
-        
-        _demoBar.delegate = self ;
-    }
-    return _demoBar ;
-}
+
+/****       FaceUnity       ****/
 
 
-- (void)demoBarDidSelectedItem:(NSString *)item {
-    
-    [[FUManager shareManager] loadItem:item];
-}
-
-- (void)demoBarBeautyParamChanged {
-    
-    [FUManager shareManager].selectedFilter = _demoBar.selectedFilter;
-    [FUManager shareManager].selectedFilterLevel = _demoBar.selectedFilterLevel;
-    [FUManager shareManager].selectedBlur = _demoBar.selectedBlur;
-    [FUManager shareManager].skinDetectEnable = _demoBar.skinDetectEnable;
-    [FUManager shareManager].beautyLevel = _demoBar.whiteLevel;
-    [FUManager shareManager].redLevel = _demoBar.redLevel;
-    [FUManager shareManager].faceShape = _demoBar.faceShape;
-    [FUManager shareManager].faceShapeLevel = _demoBar.faceShapeLevel;
-    [FUManager shareManager].thinningLevel = _demoBar.thinningLevel;
-    [FUManager shareManager].enlargingLevel = _demoBar.enlargingLevel;
-}
-
-- (void)dealloc
-{
-    NSLog(@"PLRTCStreamingChiefViewController dealloc");
-    
-    [[FUManager shareManager] destoryItems];
-}
-
-/**----------------   FaceUnity   ----------------**/
 
 - (void)setupUI
 {
@@ -299,6 +325,7 @@ FUAPIDemoBarDelegate
         PLVideoCaptureConfiguration *videoCaptureConfiguration = [PLVideoCaptureConfiguration defaultConfiguration];
         videoCaptureConfiguration.sessionPreset = sessionPreset;
         videoCaptureConfiguration.videoFrameRate = videoFrameRate;
+        videoCaptureConfiguration.position = AVCaptureDevicePositionFront ;
         
         self.session = [[PLMediaStreamingSession alloc]
                         initWithVideoCaptureConfiguration:videoCaptureConfiguration
@@ -311,40 +338,32 @@ FUAPIDemoBarDelegate
         [self.view insertSubview:self.session.previewView atIndex:0];
         [self.session setBeautifyModeOn:YES];
     }
-    self.session.captureDevicePosition = AVCaptureDevicePositionFront ;
     self.session.delegate = self;
     NSLog(@"PLMediaStreamingSession versionInfo :%@",[PLMediaStreamingSession versionInfo]);
-    
-//    [AppServerBase getPublishAddrWithRoomname:self.roomName completed:^(NSError *error, NSString *urlString) {
-//        if (error) {
-//            [self showAlertWithMessage:[NSString stringWithFormat:@"Demo request streamJson failed, error: %@", error] completion:^{
+    [AppServerBase getPublishAddrWithRoomname:self.roomName completed:^(NSError *error, NSString *urlString) {
+        if (error) {
+            [self showAlertWithMessage:[NSString stringWithFormat:@"Demo request streamJson failed, error: %@", error] completion:^{
 //                [self backButtonClick:nil];
-//            }];
-//            return ;
-//        };
-//
-//        self.pushURL = [NSURL URLWithString:urlString];
-//        self.actionButton.hidden = NO;
-//    }];
+            }];
+            return ;
+        };
+        
+        self.pushURL = [NSURL URLWithString:urlString];
+        self.actionButton.hidden = NO;
+    }];
     
-//    self.userID = [[NSUUID UUID] UUIDString];
+    self.userID = [[NSUUID UUID] UUIDString];
 //    [AppServerBase getRTCTokenWithRoomToken:self.roomName userID:self.userID completed:^(NSError *error, NSString *token){
 //        if (!token) {
 //            [self showAlertWithMessage:[NSString stringWithFormat:@"Demo request token failed, error: %@", error] completion:^{
-//                [self backButtonClick:nil];
+////                [self backButtonClick:nil];
 //            }];
 //            return ;
 //        }
 //        self.roomToken = token;
 //        [self checkConferenceButtonStatus];
 //    }];
-//    
     
-//    self.roomName = @"pilitest019" ;
-//    self.userID = @"hera";
-//    self.roomToken = @"dSC2IIrmjNXONzPvVgXZo0mI0AI83835NIuXQ3iD:DqrOrxlpzbsSgrtsRB140z4qTgs=:eyJyb29tX25hbWUiOiJwaWxpdGVzdDAxOSIsInVzZXJfaWQiOiJoZXJhIiwicGVybSI6InVzZXIiLCJleHBpcmVfYXQiOjE0OTQwNTIxMTcyNTcwMDQyNTd9";
-//
-//    [self.session setWithServerRegionID:PLRTC_SERVER_REGION_DEFAULT serverRegionName:@""];
     [self.session setWithServerRegionID:PLRTC_SERVER_REGION_DEFAULT serverRegionName:@""];
 }
 
@@ -568,6 +587,7 @@ FUAPIDemoBarDelegate
     }
 }
 
+
 #pragma mark - 推流回调
 
 - (void)mediaStreamingSession:(PLMediaStreamingSession *)session streamStateDidChange:(PLStreamState)state {
@@ -578,7 +598,7 @@ FUAPIDemoBarDelegate
 - (void)mediaStreamingSession:(PLMediaStreamingSession *)session didDisconnectWithError:(NSError *)error {
     NSLog(@"error: %@", error);
     self.actionButton.selected = NO;
-//    [self showAlertWithMessage:[NSString stringWithFormat:@"Error code: %ld, %@", (long)error.code, error.localizedDescription] completion:nil];
+    [self showAlertWithMessage:[NSString stringWithFormat:@"Error code: %ld, %@", (long)error.code, error.localizedDescription] completion:nil];
 }
 
 
@@ -612,9 +632,9 @@ FUAPIDemoBarDelegate
 - (void)mediaStreamingSession:(PLMediaStreamingSession *)session rtcDidFailWithError:(NSError *)error {
     NSLog(@"error: %@", error);
     self.conferenceButton.enabled = YES;
-//    [self showAlertWithMessage:[NSString stringWithFormat:@"Error code: %ld, %@", (long)error.code, error.localizedDescription] completion:^{
+    [self showAlertWithMessage:[NSString stringWithFormat:@"Error code: %ld, %@", (long)error.code, error.localizedDescription] completion:^{
 //        [self backButtonClick:nil];
-//    }];
+    }];
 }
 
 - (PLRTCVideoRender *)mediaStreamingSession:(PLMediaStreamingSession *)session firstVideoFrameDecodedOfUserID:(NSString *)userID {

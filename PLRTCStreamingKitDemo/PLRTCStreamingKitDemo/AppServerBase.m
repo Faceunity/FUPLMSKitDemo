@@ -151,14 +151,15 @@
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     config.HTTPAdditionalHeaders = @{@"Authorization": [AppServerBase AuthorizationFromText] };
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/pili/v1/room/token",QINIUBaseDomain]];
+    NSString *str = [NSString stringWithFormat:@"%@/pili/v1/room/token",QINIUBaseDomain] ;
+    NSURL *url = [NSURL URLWithString: str];
+    
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:@{@"Room":roomName,@"user":userID,@"version":@"2.0"} options:NSJSONWritingPrettyPrinted error:nil];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
     request.timeoutInterval = 10;
     request.HTTPBody = jsonData;
     NSURLSessionDataTask *task = [[NSURLSession sessionWithConfiguration:config] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        
         if (error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 handler(error, nil);
@@ -184,7 +185,6 @@
     NSData* originData = [Authorization dataUsingEncoding:NSASCIIStringEncoding];
     
     NSString* encodeResult = [originData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
-    
     return encodeResult;
 }
 

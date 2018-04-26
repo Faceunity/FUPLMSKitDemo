@@ -21,10 +21,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    // Do any additional setup after loading the view, typically from a nib.
-    LoginViewController * loginViewController = [[LoginViewController alloc] init];
-    [self presentViewController:loginViewController animated:YES completion:nil];
-    
+    // Do any additional setup after loading the view, typically from a nib.
+//    LoginViewController * loginViewController = [[LoginViewController alloc] init];
+//    [self presentViewController:loginViewController animated:YES completion:nil];
     self.title = @"首页";
 
     self.objects = @[@"PLRTCStreamingKitDemo", @"PLRTCKitDemo"];

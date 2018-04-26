@@ -7,10 +7,8 @@
 //
 
 #import "PLRTCChiefViewController.h"
-#import "PLRTCSession.h"
+#import <PLRTCStreamingKit/PLRTCSession.h>
 #import "AppServerBase.h"
-
-#import "FUManager.h"
 
 const static char *rtcStateNames[] = {
     "PLRTCStateConferenceUnInit",
@@ -47,28 +45,13 @@ const static char *rtcStateNames[] = {
     [self.navigationController setNavigationBarHidden:YES];
     
     [self setupUI];
-    
     [self initRTCSession];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleApplicationDidEnterBackground:)
                                                  name:UIApplicationDidEnterBackgroundNotification
                                                object:nil];
-    
-    /** FaceUnity   **/
-    
-    [[FUManager shareManager] loadItems];
 }
-
-#pragma mark - 视频数据回调
-
-
-- (CVPixelBufferRef)rtcSession:(PLRTCSession *)session cameraSourceDidGetPixelBuffer:(CVPixelBufferRef)pixelBuffer {
-    
-    NSLog(@"___________123");
-    return pixelBuffer ;
-}
-/**             FaceUnity           **/
 
 - (void)setupUI
 {
@@ -121,34 +104,29 @@ const static char *rtcStateNames[] = {
     [PLRTCSession enableLogging];
     self.session = [[PLRTCSession alloc] initWithVideoCaptureConfiguration:[PLVideoCaptureConfiguration defaultConfiguration] audioCaptureConfiguration:[PLAudioCaptureConfiguration defaultConfiguration]];
     
-    self.session.captureDevicePosition = AVCaptureDevicePositionFront ;
-    
     UIImage *waterMark = [UIImage imageNamed:@"qiniu.png"];
     [self.session setWaterMarkWithImage:waterMark position:CGPointMake(100, 100)];
-    
     self.session.previewView.frame = self.view.bounds;
     [self.view insertSubview:self.session.previewView atIndex:0];
     [self.session setBeautifyModeOn:YES];
-    self.session.stateDelegate = self ;
+    self.session.stateDelegate = self;
+    
     if (!self.isViewer) {
         [self.session startVideoCapture];
     }
-
+    
     [AppServerBase getRTCTokenWithRoomToken:self.roomName userID:self.userID completed:^(NSError *error, NSString *token) {
-
-
         if (error) {
-
             [self showAlertWithMessage:error.localizedDescription completion:^{
                 [self backButtonClick:nil];
                 return ;
             }];
-
+            
             return;
         }
-
+        
         self.roomToken = token;
-
+        
         [self.session setWithServerRegionID:PLRTC_SERVER_REGION_DEFAULT serverRegionName:@""];
     }];
 }
@@ -361,6 +339,15 @@ const static char *rtcStateNames[] = {
     NSLog(@"userID: %@ didLeaveConference", userID);
 }
 
+#pragma mark - 视频数据回调
+
+/// @abstract 获取到摄像头原数据时的回调, 便于开发者做滤镜等处理，需要注意的是这个回调在 camera 数据的输出线程，请不要做过于耗时的操作
+- (CVPixelBufferRef)rtcSession:(PLRTCSession *)session cameraSourceDidGetPixelBuffer:(CVPixelBufferRef)pixelBuffer {
+    
+    //此处可以做美颜等处理
+    
+    return pixelBuffer;
+}
 
 
 @end

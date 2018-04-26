@@ -30,10 +30,6 @@
     
     UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"设置" style:UIBarButtonItemStylePlain target:self action:@selector(settingButtonClick:)];
     self.navigationItem.rightBarButtonItem = item;
-    
-    /** 设置房间号   **/
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults setObject:@"PLRTCRoomName" forKey:@"PLRTCRoomName"];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

@@ -23,9 +23,6 @@
     // Do any additional setup after loading the view, typically from a nib.
     self.title = @"请登录";
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults setObject:@"ts001" forKey:@"name"];
-    [userDefaults setObject:@"ts001" forKey:@"password"];
-    
     if (([userDefaults objectForKey:@"name"] != nil) && ([userDefaults objectForKey:@"password"] != nil)) {
         self.nameAddressTextField.text = [userDefaults objectForKey:@"name"];
         self.passwordTextField.text = [userDefaults objectForKey:@"password"];
@@ -43,18 +40,13 @@
         return;
     }
     [AppServerBase loginWithName:self.nameAddressTextField.text password:self.passwordTextField.text completed:^(NSError *error) {
-        
         if (!error) {
             [self dismissViewControllerAnimated:YES completion:nil];
         }else {
             [self showAlertWithMessage:@"登陆失败" completion:nil];
-            NSLog(@"--- %@", error);
         }
     }];
 }
-//  lizhengliang@qiniu.com  ydyhhhxq710
-//  lizhengliang@qiniu.com  ydyhhhxq710
-
 
 - (void)showAlertWithMessage:(NSString *)message completion:(void (^)(void))completion
 {
