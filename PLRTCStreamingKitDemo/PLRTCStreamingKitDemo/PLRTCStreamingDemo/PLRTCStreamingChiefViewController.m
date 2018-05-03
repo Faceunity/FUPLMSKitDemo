@@ -425,6 +425,10 @@ static const CGSize videoSizeMap[] = {
 - (IBAction)toggleButtonClick:(id)sender
 {
     [self.session toggleCamera];
+    
+/**     -----  FaceUnity  ----     **/
+    [[FUManager shareManager] onCameraChange];
+/**     -----  FaceUnity  ----     **/
 }
 
 - (IBAction)actionButtonClick:(id)sender
