@@ -13,8 +13,10 @@
 #import "PLRTCStreamingSettingView.h"
 #import "AppServerBase.h"
 
+
 #import "FUManager.h"
 #import <FUAPIDemoBar/FUAPIDemoBar.h>
+
 
 const static char *streamStateNames[] = {
     "Unknow",
@@ -100,7 +102,6 @@ static const CGSize videoSizeMap[] = {
     [self setupUI];
     
     self.roomName = @"FaceUnity";
-    
     if (!self.roomName) {
         [self showAlertWithMessage:@"请先在设置界面设置您的房间名" completion:nil];
         return;
@@ -109,16 +110,12 @@ static const CGSize videoSizeMap[] = {
     [self initStreamingSession];
     
     /****       FaceUnity       ****/
-    
     [[FUManager shareManager] loadItems];
     [self.view addSubview:self.demoBar];
     /****       FaceUnity       ****/
 }
 
-
 /****       FaceUnity       ****/
-
-
 -(FUAPIDemoBar *)demoBar {
     if (!_demoBar) {
         
@@ -194,10 +191,9 @@ static const CGSize videoSizeMap[] = {
     /**     -----  FaceUnity  ----     **/
 }
 
-
 #pragma mark - 视频数据回调
 
-/// @abstract 获取到摄像头原数据时的回调, 便于开发者做滤镜等处理，需要注意的是这个回调在 camera 数据的输出线程，请不要做过于耗时的操作，否则可能会导致推流帧率下降
+// @abstract 获取到摄像头原数据时的回调, 便于开发者做滤镜等处理，需要注意的是这个回调在 camera 数据的输出线程，请不要做过于耗时的操作，否则可能会导致推流帧率下降
 - (CVPixelBufferRef)mediaStreamingSession:(PLMediaStreamingSession *)session cameraSourceDidGetPixelBuffer:(CVPixelBufferRef)pixelBuffer {
     
     [[FUManager shareManager] renderItemsToPixelBuffer:pixelBuffer];
@@ -205,9 +201,7 @@ static const CGSize videoSizeMap[] = {
     return pixelBuffer;
 }
 
-
 /****       FaceUnity       ****/
-
 
 
 - (void)setupUI
@@ -325,7 +319,6 @@ static const CGSize videoSizeMap[] = {
         PLVideoCaptureConfiguration *videoCaptureConfiguration = [PLVideoCaptureConfiguration defaultConfiguration];
         videoCaptureConfiguration.sessionPreset = sessionPreset;
         videoCaptureConfiguration.videoFrameRate = videoFrameRate;
-        videoCaptureConfiguration.position = AVCaptureDevicePositionFront ;
         
         self.session = [[PLMediaStreamingSession alloc]
                         initWithVideoCaptureConfiguration:videoCaptureConfiguration
@@ -356,7 +349,7 @@ static const CGSize videoSizeMap[] = {
 //    [AppServerBase getRTCTokenWithRoomToken:self.roomName userID:self.userID completed:^(NSError *error, NSString *token){
 //        if (!token) {
 //            [self showAlertWithMessage:[NSString stringWithFormat:@"Demo request token failed, error: %@", error] completion:^{
-////                [self backButtonClick:nil];
+//                [self backButtonClick:nil];
 //            }];
 //            return ;
 //        }
@@ -425,10 +418,6 @@ static const CGSize videoSizeMap[] = {
 - (IBAction)toggleButtonClick:(id)sender
 {
     [self.session toggleCamera];
-    
-/**     -----  FaceUnity  ----     **/
-    [[FUManager shareManager] onCameraChange];
-/**     -----  FaceUnity  ----     **/
 }
 
 - (IBAction)actionButtonClick:(id)sender
@@ -591,7 +580,6 @@ static const CGSize videoSizeMap[] = {
     }
 }
 
-
 #pragma mark - 推流回调
 
 - (void)mediaStreamingSession:(PLMediaStreamingSession *)session streamStateDidChange:(PLStreamState)state {
@@ -720,7 +708,7 @@ static const CGSize videoSizeMap[] = {
 - (void)mediaStreamingSession:(PLMediaStreamingSession *)session didKickoutByUserID:(NSString *)userID {
     [self.session stopConference];
     [self showAlertWithMessage:@"您被主播踢出房间了！" completion:^{
-        [self backButtonClick:nil];
+//        [self backButtonClick:nil];
     }];
 }
 

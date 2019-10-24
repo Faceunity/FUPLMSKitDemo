@@ -8,7 +8,7 @@
 
 #import "AppServerBase.h"
 
-#define QINIUBaseDomain @"https://api.pdex-service.com"
+#define QINIUBaseDomain @"https://api-demo-v2.qnsdk.com"
 
 @interface AppServerBase()
 
@@ -151,9 +151,7 @@
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     config.HTTPAdditionalHeaders = @{@"Authorization": [AppServerBase AuthorizationFromText] };
     
-    NSString *str = [NSString stringWithFormat:@"%@/pili/v1/room/token",QINIUBaseDomain] ;
-    NSURL *url = [NSURL URLWithString: str];
-    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/pili/v1/room/token",QINIUBaseDomain]];
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:@{@"Room":roomName,@"user":userID,@"version":@"2.0"} options:NSJSONWritingPrettyPrinted error:nil];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
